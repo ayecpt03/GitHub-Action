@@ -15,15 +15,15 @@ jobs:
           SSH_KEY: ${{ secrets.SSH_KEY }}
         run: |
           echo "$SSH_KEY" > private_key && chmod 600 private_key
-          
+
           for SERVER in $SSH_HOSTS; do
             echo "Patching $SERVER..."
-            ssh -o StrictHostKeyChecking=no -i private_key $SSH_USER@$SERVER <<EOF
+            ssh -o StrictHostKeyChecking=no -i private_key $SSH_USER@$SERVER << 'EOF'
               echo "Connected to $(hostname)"
               sudo apt update && sudo apt upgrade -y
               sudo apt autoremove -y
-            echo "Patching completed on $(hostname)"
-            EOF
+              echo "Patching completed on $(hostname)"
+      EOF
           done
 
-          rm -f private_key
+           rm -f private_key
