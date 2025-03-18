@@ -4,28 +4,26 @@ on:
   workflow_dispatch:  # Manually triggered
   schedule:
     - cron: '0 3 * * 1'  # Runs every Monday at 3 AM UTC
-  workflow_dispatch:
 jobs:
   patch-servers:
     runs-on: self-hosted  # Uses the self-hosted runner inside VirtualBox
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Install SSH Client
-        run: sudo apt update && sudo apt install -y openssh-client
-
-      - name: Connect & Patch Remote Server
+      - name: Connect & Patch Multiple Servers
         env:
-          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_HOSTS: ${{ secrets.SSH_HOSTS }}
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_KEY: ${{ secrets.SSH_KEY }}
         run: |
           echo "$SSH_KEY" > private_key && chmod 600 private_key
-          ssh -o StrictHostKeyChecking=no -i private_key $SSH_USER@$SSH_HOST << 'EOF'
-            echo "Updating packages on $(hostname)..."
-            sudo apt update && sudo apt upgrade -y
-            sudo apt autoremove -y
-            sudo reboot
-          EOF
+          
+          for SERVER in $SSH_HOSTS; do
+            echo "Patching $SERVER..."
+            ssh -o StrictHostKeyChecking=no -i private_key $SSH_USER@$SERVER << 'EOF'
+              echo "Connected to $(hostname)"
+              sudo apt update && sudo apt upgrade -y
+              sudo apt autoremove -y
+              echo "Patching completed on $(hostname)"
+            EOF
+          done
+
           rm -f private_key
