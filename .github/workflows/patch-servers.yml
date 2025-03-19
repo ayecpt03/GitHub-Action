@@ -7,12 +7,22 @@ jobs:
   patch-servers:
     runs-on: self-hosted  # Uses the self-hosted runner inside VirtualBox
     steps:
+      - name: Debug SSH_HOSTS
+        run: echo "SSH_HOSTS is set to: $SSH_HOSTS"
+        env:
+          SSH_HOSTS: ${{ secrets.SSH_HOSTS }}
+
       - name: Connect & Patch Multiple Servers
         env:
           SSH_HOSTS: ${{ secrets.SSH_HOSTS }}
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_KEY: ${{ secrets.SSH_KEY }}
         run: |
+          if [[ -z "$SSH_HOSTS" ]]; then
+            echo "Error: SSH_HOSTS is empty. Exiting..."
+            exit 1
+          fi
+
           echo "$SSH_KEY" > private_key && chmod 600 private_key  # Create SSH key file
           
           for SERVER in $SSH_HOSTS; do
@@ -21,4 +31,3 @@ jobs:
               "sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y && echo 'Patching completed on $SERVER'"
           done
 
-          rm -f private_key  # Remove the SSH key after execution
