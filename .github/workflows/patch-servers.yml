@@ -14,16 +14,14 @@ jobs:
           SSH_KEY: ${{ secrets.SSH_KEY }}
         run: |
           echo "$SSH_KEY" > private_key && chmod 600 private_key  # Create SSH key file
+          
           for host in $SSH_HOSTS; do
             echo "Connecting to $host..."
             ssh -i private_key -o StrictHostKeyChecking=no "$SSH_USER@$host" <<EOF
-echo "Connected to $(hostname)"
-sudo apt update && sudo apt upgrade -y
-sudo shutdown -r now  # Reboot the server
+            sudo apt update && sudo apt upgrade -y
+            sudo shutdown -r now  # Reboot the server
 EOF
-
-          echo "Reboot triggered on $host."
+            echo "Reboot triggered on $host."
           done
 
           rm -f private_key  # Remove SSH key after execution
-
