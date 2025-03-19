@@ -1,9 +1,10 @@
 name: Patch Remote Servers
 
 on:
-  workflow_dispatch:  # Manually triggered
+  workflow_dispatch:  # Allows manual triggering
   schedule:
     - cron: '0 3 * * 1'  # Runs every Monday at 3 AM UTC
+
 jobs:
   patch-servers:
     runs-on: self-hosted  # Uses the self-hosted runner inside VirtualBox
@@ -14,16 +15,16 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_KEY: ${{ secrets.SSH_KEY }}
         run: |
-          echo "$SSH_KEY" > private_key && chmod 600 private_key
-          
+          echo "$SSH_KEY" > private_key && chmod 600 private_key  # Create SSH key file
+
           for SERVER in $SSH_HOSTS; do
             echo "Patching $SERVER..."
             ssh -o StrictHostKeyChecking=no -i private_key $SSH_USER@$SERVER <<EOF
-              echo "Connected to $(hostname)"
-              sudo apt update && sudo apt upgrade -y
-              sudo apt autoremove -y
-              echo "Patching completed on $(hostname)"
+echo "Connected to \$(hostname)"
+sudo apt update && sudo apt upgrade -y
+sudo apt autoremove -y
+echo "Patching completed on \$(hostname)"
 EOF
           done
 
-          rm -f private_key
+          rm -f private_key  # Remove the SSH key after execution
