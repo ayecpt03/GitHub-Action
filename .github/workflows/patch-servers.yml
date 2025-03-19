@@ -14,7 +14,7 @@ jobs:
           SSH_KEY: ${{ secrets.SSH_KEY }}
         run: |
           echo "$SSH_KEY" > private_key && chmod 600 private_key  # Create SSH key file
-          
+          echo "$SSH_HOST" > host_name
           for host in $SSH_HOSTS; do
             echo "Connecting to $host..."
             ssh -i private_key -o StrictHostKeyChecking=no "$SSH_USER@$host" \
