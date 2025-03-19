@@ -2,8 +2,6 @@ name: Patch Remote Servers
 
 on:
   workflow_dispatch:  # Allows manual triggering
-  schedule:
-    - cron: '0 3 * * 1'  # Runs every Monday at 3 AM UTC
 
 jobs:
   patch-servers:
@@ -20,11 +18,11 @@ jobs:
           for SERVER in $SSH_HOSTS; do
             echo "Patching $SERVER..."
             ssh -o StrictHostKeyChecking=no -i private_key $SSH_USER@$SERVER <<EOF
-echo "Connected to \$(hostname)"
-sudo apt update && sudo apt upgrade -y
-sudo apt autoremove -y
-echo "Patching completed on \$(hostname)"
-EOF
+            echo "Connected to \$(hostname)"
+            sudo apt update && sudo apt upgrade -y
+            sudo apt autoremove -y
+            echo "Patching completed on \$(hostname)"
+            EOF
           done
 
           rm -f private_key  # Remove the SSH key after execution
