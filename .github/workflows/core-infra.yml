@@ -20,11 +20,11 @@ jobs:
 
       - name: Terraform Plan
         working-directory: Terraform-Infra-Core/tf
-        run: terraform plan -var-file=Terraform-Infra-Core/tf-project/dev-tfvars.json
+        run: terraform plan -var-file=/Terraform-Infra-Core/tf-project/dev-tfvars.json
 
       - name: Terraform Apply
         working-directory: Terraform-Infra-Core/tf
-        run: terraform apply -auto-approve -var-file=Terraform-Infra-Core/tf-project/dev-tfvars.json
+        run: terraform apply -auto-approve -var-file=/Terraform-Infra-Core/tf-project/dev-tfvars.json
 
       - name: Upload Terraform State
         if: always()
