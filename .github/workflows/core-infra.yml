@@ -25,3 +25,11 @@ jobs:
       - name: Terraform Apply
         working-directory: Terraform-Infra-Core/tf
         run: terraform apply -auto-approve -var-file=../tf-project/dev.tfvars.json
+
+      - name: Upload Terraform State
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-state
+          path: Terraform-Infra-Core/tf/terraform.tfstate
+
