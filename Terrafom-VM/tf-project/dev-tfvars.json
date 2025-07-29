@@ -1,0 +1,42 @@
+{
+  "resource_group_name": "dev-rg1",
+  "location": "Southeast Asia",
+  "vnet_name": "dev-vnet",
+  "subnet_name": "dev-subnet",
+  "nsg_name": "dev-nsg",
+  "sgrule_name": "dev-sg",
+  "nic_name": "dev-nic1",
+  "ipconfig_name": "dev-ipconfig1",
+  "stage": "dev",
+  "tags": {
+    "env": "dev",
+    "owner": "Adrian Mendoza"
+  },
+  "ssh_public_key": "~/.ssh/tf-adminuserkey.pub",
+  "vms": {
+    "707": {
+      "vm_name": "dev1",
+      "vm_size": "Standard_B1s",
+      "private_ip_address": "10.123.1.5",
+      "image_publisher": "Canonical",
+      "image_offer": "UbuntuServer",
+      "image_sku": "18.04-LTS",
+      "image_version": "latest",
+      "disk_type": "Standard_LRS",
+      "availability_zone": "1",
+      "stage": "dev"
+    },
+    "708": {
+      "vm_name": "dev2",
+      "vm_size": "Standard_B1s",
+      "private_ip_address": "10.123.1.6",
+      "image_publisher": "Canonical",
+      "image_offer": "UbuntuServer",
+      "image_sku": "18.04-LTS",
+      "image_version": "latest",
+      "disk_type": "Standard_LRS",
+      "availability_zone": "1",
+      "stage": "dev"
+    }
+  }
+}
