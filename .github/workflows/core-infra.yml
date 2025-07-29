@@ -1,11 +1,7 @@
 name: Deploy Core Infra
 
 on:
-  push:
-    paths:
-      - 'tf/core/**'
-      - 'tf-project/core.tfvars.json'
-      - '.github/workflows/core-infra.yml'
+  workflow_dispatch:  # 👈 This enables manual trigger in GitHub UI
 
 jobs:
   terraform:
@@ -18,14 +14,14 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
-      - name: Init
-        working-directory: tf/core
+      - name: Terraform Init
+        working-directory: tf
         run: terraform init
 
-      - name: Plan
-        working-directory: tf/core
-        run: terraform plan -var-file=../../tf-project/core.tfvars.json
+      - name: Terraform Plan
+        working-directory: tf
+        run: terraform plan -var-file=../tf-project/dev.tfvars.json
 
-      - name: Apply
-        working-directory: tf/core
-        run: terraform apply -auto-approve -var-file=../../tf-project/core.tfvars.json
+      - name: Terraform Apply
+        working-directory: tf
+        run: terraform apply -auto-approve -var-file=../tf-project/dev.tfvars.json
