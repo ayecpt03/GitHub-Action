@@ -26,6 +26,12 @@ resource "azurerm_linux_virtual_machine" "tf-vms" {
   network_interface_ids = [
     azurerm_network_interface.tf-nic1[each.key].id
   ]
+
+  admin_ssh_key {
+    username   = "adminuser"
+    public_key = file(var.ssh_public_key)
+  }
+
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = each.value.disk_type
