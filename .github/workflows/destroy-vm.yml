@@ -1,0 +1,31 @@
+name: Deploy VMs
+
+on:
+  push:
+    paths:
+      - 'tf/vm/**'
+      - 'tf-project/dev.tfvars.json'
+      - '.github/workflows/vm.yml'
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      - name: Init
+        working-directory: tf/vm
+        run: terraform init
+
+      - name: Plan
+        working-directory: tf/vm
+        run: terraform plan -var-file=../../tf-project/dev.tfvars.json
+
+      - name: Apply
+        working-directory: tf/vm
+        run: terraform destroy -auto-approve -var-file=../../tf-project/dev.tfvars.json
