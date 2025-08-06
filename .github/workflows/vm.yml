@@ -1,4 +1,4 @@
-name: Deploy Core Infra
+name: Deploy VM
 
 on:
   workflow_dispatch:  # Manual trigger
