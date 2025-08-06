@@ -1,4 +1,4 @@
-name: Deploy VMs
+name: Destroy VMs
 
 on:
   push:
