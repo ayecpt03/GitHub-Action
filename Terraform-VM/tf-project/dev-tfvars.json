@@ -12,7 +12,7 @@
     "env": "dev",
     "owner": "Adrian Mendoza"
   },
-  "ssh_public_key": "Terraform-VM/keys/tf-adminuserkey.pub",
+  "ssh_public_key": "../keys/tf-adminuserkey.pub",
   "vms": {
     "707": {
       "vm_name": "dev1",
