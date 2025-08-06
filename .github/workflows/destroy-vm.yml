@@ -1,15 +1,17 @@
-name: Destroy VMs
+name: Deploy VM
 
 on:
-  push:
-    paths:
-      - 'tf/vm/**'
-      - 'tf-project/dev.tfvars.json'
-      - '.github/workflows/vm.yml'
+  workflow_dispatch:  # Manual trigger
 
 jobs:
   terraform:
     runs-on: ubuntu-latest
+
+    env:
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
     steps:
       - name: Checkout
@@ -18,14 +20,21 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
-      - name: Init
-        working-directory: tf/vm
+      - name: Terraform Init
+        working-directory: Terraform-VM/tf
         run: terraform init
 
-      - name: Plan
-        working-directory: tf/vm
-        run: terraform plan -var-file=../../tf-project/dev.tfvars.json
+      - name: Terraform Plan
+        working-directory: Terraform-VM/tf
+        run: terraform plan -var-file=../tf-project/dev-tfvars.json
 
-      - name: Apply
-        working-directory: tf/vm
-        run: terraform destroy -auto-approve -var-file=../../tf-project/dev.tfvars.json
+      - name: Terraform Apply
+        working-directory: Terraform-VM/tf
+        run: terraform destroy -auto-approve -var-file=../tf-project/dev-tfvars.json
+
+      - name: Upload Terraform State
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-state
+          path: Terraform-VM/tf/terraform.tfstate
