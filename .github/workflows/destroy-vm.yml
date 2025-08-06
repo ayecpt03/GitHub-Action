@@ -1,4 +1,4 @@
-name: Deploy VM
+name: Destroy VM
 
 on:
   workflow_dispatch:  # Manual trigger
