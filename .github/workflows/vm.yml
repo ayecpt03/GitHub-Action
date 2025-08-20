@@ -37,6 +37,6 @@ jobs:
         working-directory: Terraform-VM/tf
         run: terraform plan -var-file="../tf-project/${{ github.event.inputs.environment }}-tfvars.json"
 
-      - name: Terraform Destroy
+      - name: Terraform Apply
         working-directory: Terraform-VM/tf
         run: terraform apply -auto-approve -var-file="../tf-project/${{ github.event.inputs.environment }}-tfvars.json"
