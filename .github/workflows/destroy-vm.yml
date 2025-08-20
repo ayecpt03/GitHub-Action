@@ -1,40 +1,42 @@
 name: Destroy VM
 
 on:
-  workflow_dispatch:  # Manual trigger
-
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Which environment to deploy (dev/cert/prod)"
+        required: true
+        default: "dev"
 jobs:
   terraform:
     runs-on: ubuntu-latest
 
     env:
-      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
         working-directory: Terraform-VM/tf
-        run: terraform init
+        run: |
+          terraform init \
+            -backend-config="resource_group_name=CoreServices" \
+            -backend-config="storage_account_name=coreservicestfstatefiles" \
+            -backend-config="container_name=tfstate" \
+            -backend-config="key=${{ github.event.inputs.environment }}vm.tfstate"
 
       - name: Terraform Plan
         working-directory: Terraform-VM/tf
-        run: terraform plan -var-file=../tf-project/dev-tfvars.json
+        run: terraform plan -var-file="../tf-project/${{ github.event.inputs.environment }}-tfvars.json"
 
-      - name: Terraform Apply
-        working-directory: Terraform-VM/tf
-        run: terraform destroy -auto-approve -var-file=../tf-project/dev-tfvars.json
-
-      - name: Upload Terraform State
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: terraform-state
-          path: Terraform-VM/tf/terraform.tfstate
+      - name: Terraform Destroy
+        working-directory: TTerraform-VM/tf
+        run: terraform destroy -auto-approve -var-file="../tf-project/${{ github.event.inputs.environment }}-tfvars.json"

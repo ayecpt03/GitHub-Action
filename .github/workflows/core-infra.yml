@@ -31,7 +31,7 @@ jobs:
             -backend-config="resource_group_name=CoreServices" \
             -backend-config="storage_account_name=coreservicestfstatefiles" \
             -backend-config="container_name=tfstate" \
-            -backend-config="key=${{ github.event.inputs.environment }}terraform.tfstate"
+            -backend-config="key=${{ github.event.inputs.environment }}core.tfstate"
 
       - name: Terraform Plan
         working-directory: Terraform-Infra-Core/tf
